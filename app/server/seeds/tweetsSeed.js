@@ -16,15 +16,17 @@ const seed = async () => {
 
         for (let i = 0; i < users.length; i++) {
             const user = users[i]
-            const tweet = tweetsSeed.tweets[i % tweetsSeed.tweets.length]
+            const tweetObj = tweetsSeed.tweets[i % tweetsSeed.tweets.length]
+            const tweet = tweetObj ? tweetObj.tweet : null
 
+            const hashTags = tweet ? tweet.split(' ').filter((word) => word.startsWith('#')) : []
             await PosteModel.create({
-                tweet: tweet.tweet || 'This is a crazy tweet',
+                tweet: tweet || 'This is a crazy tweet',
                 createdBy: user._id.toString(),
-                hashTags: []
+                hashTags: hashTags
             })
 
-            console.log(`Inserted "${tweet.tweet || 'This is a crazy tweet'}" successfully for user ${user.name}`)
+            console.log(`Inserted "${tweet || 'This is a crazy tweet'}" successfully for user ${user.name}`)
         }
     } catch (error) {
         console.error(error)
