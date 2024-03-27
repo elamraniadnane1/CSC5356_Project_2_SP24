@@ -15,10 +15,12 @@ export const getPosts = async (req, res) => {
 // we create a specific post give a body from the front-end
 export const createPost = async (req, res) => {
     const post = req.body
+
+    console.log(req)
     const newPost = new PostMessage(post)
     try {
         await newPost.save()
-        req.status(201).json(newPost)
+        req.status(201).json(req)
     } catch (error) {
         res.status(409).json({ message: error.message })
     }

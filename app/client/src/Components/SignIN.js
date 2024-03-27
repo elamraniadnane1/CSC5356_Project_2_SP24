@@ -73,6 +73,12 @@ const SignIN = () => {
                         <Link to='/auth'>
                             <button className='btn4'>Sign Up</button>
                         </Link>
+
+                        <div className='d-flex justify-content-center pt-4'>
+                            <Link to='/'>
+                                <button className='btn3'>Home</button>
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
