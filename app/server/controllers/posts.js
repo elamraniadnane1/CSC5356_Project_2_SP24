@@ -4,7 +4,7 @@ import PostMessage from '../models/poste.js'
 // get all posts that match PostMessage schema
 export const getPosts = async (req, res) => {
     try {
-        const postMessages = await PostMessage.find()
+        const postMessages = await PostMessage.find().sort({ _id: -1 }).populate('createdBy')
 
         res.status(200).json(postMessages)
     } catch (error) {

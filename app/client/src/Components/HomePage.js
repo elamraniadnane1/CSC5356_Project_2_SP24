@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { createPost } from '../api'
 import { Link, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { getPosts } from '../actions/posts'
+import { createPost, getPosts } from '../actions/posts'
 
 const HomePage = () => {
     const dispatch = useDispatch()
@@ -25,6 +24,9 @@ const HomePage = () => {
         setTweet('')
 
         dispatch(createPost(formData, history))
+        setTimeout(() => {
+            window.location.reload()
+        }, 100)
     }
     useEffect(() => {
         const fetchData = async () => {
@@ -39,7 +41,6 @@ const HomePage = () => {
     }, [dispatch])
 
     const posts = useSelector((state) => state.posts)
-    console.log('posts', posts)
 
     return (
         <main>
@@ -80,7 +81,10 @@ const HomePage = () => {
                             </div>
                             <div>
                                 {posts.map((post) => (
-                                    <div key={post._id}>{post.tweet}</div>
+                                    <div key={post._id}>
+                                        <h5>{post.createdBy.name}</h5>
+                                        <p>{post.tweet}</p>
+                                    </div>
                                 ))}
                             </div>
                         </div>
