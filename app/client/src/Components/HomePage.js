@@ -47,11 +47,11 @@ const HomePage = () => {
             <section id='home' className='exam section'>
                 <div className='title'>
                     <h2 id='Home' className='typewriter'>
-                        <span className='typewriter2'>Twitter page</span>
+                        <span className='typewriter2'>Twitter</span>
                         <a className='scroll-link'></a>
                     </h2>
                     <h4>
-                        <span>Please sign in so you can tweet and see tweets</span>
+                        <span>{isLoggedIn ? 'Welcome to the Twitter page' : 'Please sign in so you can tweet and see others tweets'}</span>
                     </h4>
                 </div>
 
