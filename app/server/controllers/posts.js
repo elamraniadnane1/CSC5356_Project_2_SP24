@@ -16,13 +16,15 @@ export const getPosts = async (req, res) => {
 export const createPost = async (req, res) => {
     const post = req.body
 
-    console.log(req)
-    const newPost = new PostMessage(post)
+    const { tweet } = req.body
+    const hashTags = tweet.split(' ').filter((word) => word.startsWith('#'))
+
+    const newPost = new PostMessage({ ...post, hashTags })
     try {
         await newPost.save()
-        req.status(201).json(req)
+        return res.status(201).json({ newPost })
     } catch (error) {
-        res.status(409).json({ message: error.message })
+        return res.status(409).json({ message: error.message })
     }
 }
 

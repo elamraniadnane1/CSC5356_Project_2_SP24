@@ -5,7 +5,8 @@ const postSchema = mongoose.Schema({
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }
+    },
+    hashTags: { type: [String], default: [] }
 })
 
 var PostMessage = mongoose.model('Poste', postSchema)

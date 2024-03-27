@@ -23,7 +23,7 @@ const SignIn = () => {
 
     return (
         <div className='format'>
-            <Link to='/auth'>{isLoggedIn ? <button className='btn5'>{username}</button> : <button className='btn3'>Sign In</button>}</Link>
+            <Link to='/auth'>{isLoggedIn ? <button className='btn9'>{username}</button> : <button className='btn3'>Sign In</button>}</Link>
         </div>
     )
 }

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { useDispatch } from 'react-redux'
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min'
 import { createPost } from '../api'
+import { Link, useHistory } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { getPosts } from '../actions/posts'
 
 const HomePage = () => {
     const dispatch = useDispatch()
@@ -25,18 +26,66 @@ const HomePage = () => {
 
         dispatch(createPost(formData, history))
     }
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                await dispatch(getPosts())
+            } catch (error) {
+                console.error('Error fetching posts:', error)
+            }
+        }
+
+        fetchData()
+    }, [dispatch])
+
+    const posts = useSelector((state) => state.posts)
+    console.log('posts', posts)
 
     return (
         <main>
             <section id='home' className='exam section'>
-                <br />
                 <div className='title'>
                     <h2 id='Home' className='typewriter'>
                         <span className='typewriter2'>Twitter page</span>
-
                         <a className='scroll-link'></a>
                     </h2>
+                    <h4>
+                        <span>Please sign in so you can tweet and see tweets</span>
+                    </h4>
                 </div>
+
+                {isLoggedIn && (
+                    <>
+                        <div className='uperuper'>
+                            <div className='container myowncontainer'>
+                                <form onSubmit={posteTweet}>
+                                    <div className='row pt-5 mx-auto'>
+                                        <div className='col-8 form-group mx-auto'>
+                                            <input
+                                                type='text'
+                                                required
+                                                className='form-control'
+                                                placeholder='Tweet something...'
+                                                value={tweet}
+                                                onChange={(e) => {
+                                                    setTweet(e.target.value)
+                                                }}
+                                            />
+                                        </div>
+                                        <div className='d-flex justify-content-center pt-4'>
+                                            <input type='submit' className='btn3' value='Tweet'></input>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div>
+                                {posts.map((post) => (
+                                    <div key={post._id}>{post.tweet}</div>
+                                ))}
+                            </div>
+                        </div>
+                    </>
+                )}
             </section>
         </main>
     )
