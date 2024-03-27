@@ -3,11 +3,7 @@ import { Link, useHistory } from 'react-router-dom'
 import { useDispatch } from 'react-redux'
 import { signin, signup } from '../actions/auth'
 
-import { useSelector } from 'react-redux'
-
 const Auth = () => {
-    const authData = useSelector((state) => state.auth.authData)
-
     const dispatch = useDispatch()
     const history = useHistory()
     const [name, setusername] = useState('')
@@ -17,7 +13,7 @@ const Auth = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     useEffect(() => {
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem('profile')
         if (token) {
             setIsLoggedIn(true)
         }
@@ -36,6 +32,10 @@ const Auth = () => {
         }
     }
 
+    const tokenData = JSON.parse(localStorage.getItem('profile'))
+    const username = tokenData?.result.name
+    const useremail = tokenData?.result.email
+
     return (
         <>
             {isLoggedIn ? (
@@ -43,26 +43,25 @@ const Auth = () => {
                     <section className='exam section'>
                         <div className='title'>
                             <h2 id='Add'>
-                                Welcome user {authData}
+                                Welcome {username}
                                 <a className='scroll-link'></a>
                             </h2>
+                            <h4>{useremail}</h4>
                             <br />
                             <br />
                         </div>
 
-                        {/* go home button */}
                         <div className='d-flex justify-content-center pt-4'>
                             <Link to='/'>
                                 <button className='btn3'>Home</button>
                             </Link>
                         </div>
 
-                        {/* log out button */}
                         <div className='d-flex justify-content-center pt-4'>
                             <button
                                 className='btn3'
                                 onClick={() => {
-                                    localStorage.removeItem('token')
+                                    localStorage.removeItem('profile')
                                     setIsLoggedIn(false)
                                 }}
                             >
