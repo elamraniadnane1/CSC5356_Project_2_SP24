@@ -12,21 +12,19 @@ mongoose
 
 const seed = async () => {
     try {
-        // find all users in the db
         const users = await UserModel.find()
 
-        // iterate over each user
         for (let i = 0; i < users.length; i++) {
             const user = users[i]
-            const tweet = tweetsSeed.tweets[i % tweetsSeed.tweets.length] // to loop through tweets if users > tweets
+            const tweet = tweetsSeed.tweets[i % tweetsSeed.tweets.length]
 
-            // create a new post using PosteModel and assign the current user as createdBy
             await PosteModel.create({
-                tweet: tweet.tweet,
-                createdBy: user._id // assuming _id is the identifier of the user
+                tweet: tweet.tweet || 'This is a crazy tweet',
+                createdBy: user._id.toString(),
+                hashTags: []
             })
 
-            console.log(`Inserted "${tweet.tweet}" successfully for user ${user.name}`)
+            console.log(`Inserted "${tweet.tweet || 'This is a crazy tweet'}" successfully for user ${user.name}`)
         }
     } catch (error) {
         console.error(error)
