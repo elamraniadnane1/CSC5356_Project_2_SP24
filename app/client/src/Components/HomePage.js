@@ -76,10 +76,10 @@ const HomePage = () => {
                             <div>
                                 <div className='flex-container'>
                                     <button className='btn5' onClick={() => setActiveTab('default')}>
-                                        All Posts
+                                        All Tweets
                                     </button>
                                     <button className='btn5' onClick={() => setActiveTab('filtered')}>
-                                        For You Posts
+                                        For You Tweets
                                     </button>
                                 </div>
                                 <p>Total of: {activeTab === 'default' ? `${posts?.postMessages?.length}` : `${filteredPosts?.length}`} tweets</p>

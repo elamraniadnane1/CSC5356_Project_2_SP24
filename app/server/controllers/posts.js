@@ -3,17 +3,16 @@ import PostMessage from '../models/poste.js'
 import User from '../models/user.js'
 import getPostesFromNeo4j from './neo4j.js'
 
-// get all posts that match PostMessage schema
-export const getPosts = async (req, res) => {
+export const getRecommendedTweets = async (req, res) => {
     try {
         const { id } = req.params
 
-        const postMessages = await PostMessage.find().sort({ _id: -1 }).populate('createdBy')
         const userHashTags = await User.findById(id).select('hashTags')
+        const hashTags = userHashTags.hashTags
 
-        // const forYouPosts = await getPostesFromNeo4j(userHashTags)
+        const forYouPosts = await getPostesFromNeo4j(hashTags)
 
-        res.status(200).json({ postMessages, userHashTags })
+        res.status(200).json(forYouPosts)
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
@@ -57,4 +56,17 @@ export const updatePost = async (req, res) => {
     const updatedPost = await PostMessage.findByIdAndUpdate(id, { ...post, id }, { new: true })
 
     res.json(updatedPost)
+}
+
+export const getPosts = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const postMessages = await PostMessage.find().sort({ _id: -1 }).populate('createdBy')
+        const userHashTags = await User.findById(id).select('hashTags')
+
+        res.status(200).json({ postMessages, userHashTags })
+    } catch (error) {
+        res.status(404).json({ message: error.message })
+    }
 }

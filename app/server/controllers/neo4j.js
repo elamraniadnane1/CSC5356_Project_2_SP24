@@ -1,20 +1,26 @@
-const getPostesFromNeo4j = async (userHashTags) => {
-    const { hashTags } = userHashTags
+import neo4j from 'neo4j-driver'
+
+const driver = neo4j.driver('bolt://localhost:7687', neo4j.auth.basic('neo4j', 'lina2015'))
+
+const getPostsFromNeo4j = async (userHashTags) => {
     const session = driver.session()
-    const posts = []
-    for (let i = 0; i < hashTags.length; i++) {
+    try {
         const result = await session.run(
-            `MATCH (p:Post)-[:HASHTAG]->(h:HashTag)
-            WHERE h.name = $hashTag
-            RETURN p`,
-            { hashTag: hashTags[i] }
+            `MATCH (t:Tweet)-[:CONTAINS]->(h:Hashtag)
+            WHERE h.name IN $tags
+            RETURN t.text AS tweet, t.createdAt AS postedOn
+            ORDER BY t.createdAt DESC
+            `,
+            { tags: userHashTags }
         )
-        result.records.forEach((record) => {
-            posts.push(record.get('p').properties)
-        })
+        const posts = result.records.map((record) => ({
+            tweet: record.get('tweet'),
+            postedOn: record.get('postedOn')
+        }))
+        return posts
+    } finally {
+        await session.close()
     }
-    session.close()
-    return posts
 }
 
-export default getPostesFromNeo4j
+export default getPostsFromNeo4j
