@@ -4,8 +4,7 @@ import { getPosts, createPost, deletePost } from '../controllers/posts.js'
 
 const router = express.Router()
 
-// app routes
-router.get('/', getPosts)
+router.get('/:id', getPosts)
 router.post('/', createPost)
 router.delete('/:id', deletePost)
 

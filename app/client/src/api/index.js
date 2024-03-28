@@ -5,7 +5,7 @@ const API = axios.create({ baseURL: 'http://localhost:5000' })
 
 // Axios funcs for geting, posting, deteling, and updating posts.
 
-export const fetchPosts = () => API.get('/tweet')
+export const fetchPosts = (id) => API.get(`/tweet/${id}`)
 export const createPost = (newPost) => API.post('/tweet', newPost)
 export const deletePost = (id) => API.delete(`/tweet/${id}`)
 export const updatePost = (id, post) => API.patch(`/tweet/${id}`, post)

@@ -1,25 +1,32 @@
 import mongoose from 'mongoose'
 import PostMessage from '../models/poste.js'
+import User from '../models/user.js'
 
 // get all posts that match PostMessage schema
 export const getPosts = async (req, res) => {
     try {
-        const postMessages = await PostMessage.find().sort({ _id: -1 }).populate('createdBy')
+        const { id } = req.params
 
-        res.status(200).json(postMessages)
+        const postMessages = await PostMessage.find().sort({ _id: -1 }).populate('createdBy')
+        const userHashTags = await User.findById(id).select('hashTags')
+
+        res.status(200).json({ postMessages, userHashTags })
     } catch (error) {
         res.status(404).json({ message: error.message })
     }
 }
 
-// we create a specific post give a body from the front-end
 export const createPost = async (req, res) => {
     const post = req.body
 
-    const { tweet } = req.body
+    const { tweet, createdBy } = req.body
     const hashTags = tweet.split(' ').filter((word) => word.startsWith('#'))
 
     const newPost = new PostMessage({ ...post, hashTags })
+    const user = await User.findById(createdBy)
+    user.hashTags = [...new Set([...user.hashTags, ...hashTags])]
+    await user.save()
+
     try {
         await newPost.save()
         return res.status(201).json({ newPost })
