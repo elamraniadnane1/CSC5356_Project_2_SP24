@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import PostMessage from '../models/poste.js'
 import User from '../models/user.js'
+import getPostesFromNeo4j from './neo4j.js'
 
 // get all posts that match PostMessage schema
 export const getPosts = async (req, res) => {
@@ -9,6 +10,8 @@ export const getPosts = async (req, res) => {
 
         const postMessages = await PostMessage.find().sort({ _id: -1 }).populate('createdBy')
         const userHashTags = await User.findById(id).select('hashTags')
+
+        // const forYouPosts = await getPostesFromNeo4j(userHashTags)
 
         res.status(200).json({ postMessages, userHashTags })
     } catch (error) {
