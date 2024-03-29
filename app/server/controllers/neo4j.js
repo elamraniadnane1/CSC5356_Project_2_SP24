@@ -9,7 +9,7 @@ const getPostsFromNeo4j = async (userHashTags) => {
             `    MATCH (t:Tweet)
             WHERE t.text CONTAINS '#Neo4j'
             RETURN t.text AS TweetText, t.id AS UserId
-            LIMIT 100
+            LIMIT 10
             `
             // { tags: userHashTags }
         )
