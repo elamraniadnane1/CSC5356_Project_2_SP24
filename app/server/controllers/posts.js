@@ -2,6 +2,34 @@ import mongoose from 'mongoose'
 import PostMessage from '../models/poste.js'
 import User from '../models/user.js'
 import getPostesFromNeo4j from './neo4j.js'
+import { Kafka } from 'kafkajs'
+import Sentiment from 'sentiment'
+
+const kafka = new Kafka({
+    clientId: 'my-app',
+    brokers: ['localhost:9092']
+})
+
+const producer = kafka.producer()
+
+export const kafkaStreem = async (req, res) => {
+    const { tweet, createdBy } = req.body
+
+    var sentiment = new Sentiment()
+
+    const result = sentiment.analyze(tweet)
+
+    // await producer.send({
+    //     topic: 'tweet-sentiment-analysis',
+    //     messages: [{ value: JSON.stringify({ tweet, score, positive, negative }) }]
+    // })
+
+    try {
+        return res.status(201).json({ tweet, result })
+    } catch (error) {
+        return res.status(409).json({ message: error.message })
+    }
+}
 
 export const getRecommendedTweets = async (req, res) => {
     try {
