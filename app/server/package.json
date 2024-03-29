@@ -17,8 +17,10 @@
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
+    "kafkajs": "^2.2.4",
     "mongoose": "^6.2.7",
     "neo4j-driver": "^5.18.0",
-    "nodemon": "^2.0.15"
+    "nodemon": "^2.0.15",
+    "sentiment": "^5.0.2"
   }
 }
