@@ -20,3 +20,14 @@ kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from
 .\bin\windows\zookeeper-server-stop.bat .\config\zookeeper.properties
 
 .\bin\windows\kafka-server-stop.bat .\config\server.properties
+
+---------------------------------------------------------------------------------------------------------
+
+docker-compose up -d
+
+docker-compose exec kafka kafka-topics.sh --create --topic test --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
+
+docker-compose exec kafka kafka-topics.sh --list --bootstrap-server localhost:9092
+
+docker-compose down
+
