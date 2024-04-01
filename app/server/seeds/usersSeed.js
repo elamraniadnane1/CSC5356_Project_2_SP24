@@ -13,7 +13,7 @@ mongoose
 
 const seed = async () => {
     try {
-        const hashedPassword = await bcrypt.hash('lina2015', 12)
+        const hashedPassword = await bcrypt.hash('12345', 12)
 
         for (const user of users_seed.users) {
             await UserModal.create({

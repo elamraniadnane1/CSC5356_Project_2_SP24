@@ -24,10 +24,39 @@ kafka-console-consumer.bat --topic test --bootstrap-server localhost:9092 --from
 ---------------------------------------------------------------------------------------------------------
 
 docker-compose up -d
-
-docker-compose exec kafka kafka-topics.sh --create --topic test --partitions 1 --replication-factor 1 --bootstrap-server localhost:9092
+docker-compose down
 
 docker-compose exec kafka kafka-topics.sh --list --bootstrap-server localhost:9092
 
-docker-compose down
+MATCH (t:Tweet)
+    WHERE t.text CONTAINS '#Neo4j'
+    RETURN t.text AS TweetText, t.creationDate AS PostedOn
+    LIMIT 100
+
+
+
+MATCH (t:Tweet)
+    WHERE t.text CONTAINS '#Neo4j'
+    RETURN t.text AS TweetText, t.id AS UserId
+    LIMIT 100
+
+
+CREATE (t:Tweet {
+    text: "Ayoub Adnan new tweet #Neo4j!",
+    created_at: "2024-03-27T12:00:00Z",
+    id_str: "unique_tweet_id_12345",
+    favorites: 0,
+    sentimentScore: 3,
+    sentimentComparative: 0
+})
+RETURN t
+
+
+
+MATCH (t:Tweet)
+WHERE t.text = "I love the world so much this is so awsome #love #fun haha"
+RETURN t
+
+CALL db.relationshipTypes()
+
 

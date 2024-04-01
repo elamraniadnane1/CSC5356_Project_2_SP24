@@ -1,4 +1,3 @@
-import mongoose from 'mongoose'
 import PostMessage from '../models/poste.js'
 import User from '../models/user.js'
 import getPostesFromNeo4j, { postTweetToNeo4j } from './neo4j.js'
@@ -13,25 +12,6 @@ const kafka = new Kafka({
 
 const producer = kafka.producer()
 const consumer = kafka.consumer({ groupId: 'test-group' })
-
-export const createPost = async (req, res) => {
-    const post = req.body
-
-    const { tweet, createdBy } = req.body
-    const hashTags = tweet.split(' ').filter((word) => word.startsWith('#'))
-
-    const newPost = new PostMessage({ ...post, hashTags })
-    const user = await User.findById(createdBy)
-    user.hashTags = [...new Set([...user.hashTags, ...hashTags])]
-    await user.save()
-
-    try {
-        await newPost.save()
-        return res.status(201).json({ newPost })
-    } catch (error) {
-        return res.status(409).json({ message: error.message })
-    }
-}
 
 export const kafkaStreemedTweet = async (req, res) => {
     await producer.connect()
@@ -54,24 +34,27 @@ export const kafkaStreemedTweet = async (req, res) => {
     await consumer.subscribe({ topic: 'tweet-sentiment-analysis', fromBeginning: true })
 
     const hashTags = tweet.split(' ').filter((word) => word.startsWith('#'))
-    const newPost = new PostMessage({ ...post, hashTags, tweetSentiment })
+    const newPost = new PostMessage({ ...post, tweetSentiment })
     await newPost.save()
-    const postedTweet = await PostMessage.findById(newPost._id).select('tweet createdBy hashTags tweetSentiment')
+    const postedTweet = await PostMessage.findById(newPost._id).select('tweet createdBy tweetSentiment')
     const user = await User.findById(createdBy)
     user.hashTags = [...new Set([...user.hashTags, ...hashTags])]
     await user.save()
 
-    const neo4jUpdatedGraph = await postTweetToNeo4j(tweet, createdBy)
+    let kafkaStreamedTweet = null
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
-            console.log('Kafka Streamed Tweet:', {
+            console.log('\nKafka Streamed Tweet:\n', {
                 value: message.value.toString()
             })
+            kafkaStreamedTweet = JSON.parse(message.value.toString())
         }
     })
 
+    const neo4jUpdatedGraph = await postTweetToNeo4j(tweet, createdBy, result.score, result.comparative)
+
     try {
-        return res.status(201).json({ user, postedTweet, neo4jUpdatedGraph })
+        return res.status(201).json({ kafkaStreamedTweet, user, sentimentResult: result, postedTweet, neo4jUpdatedGraph })
     } catch (error) {
         return res.status(409).json({ message: error.message })
     }
@@ -92,28 +75,26 @@ export const getRecommendedTweets = async (req, res) => {
     }
 }
 
-// delete a specific post givn as ID from the params
-export const deletePost = async (req, res) => {
-    const { id } = req.params
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`)
-
-    await PostMessage.findByIdAndRemove(id)
-    res.json({ message: 'Post deleted successfully.' })
-}
-
-// update with id, not implimented yet in the front-end
-export const updatePost = async (req, res) => {
-    const { id } = req.params
+export const createPost = async (req, res) => {
     const post = req.body
 
-    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`)
+    const { tweet, createdBy } = req.body
+    const hashTags = tweet.split(' ').filter((word) => word.startsWith('#'))
 
-    const updatedPost = await PostMessage.findByIdAndUpdate(id, { ...post, id }, { new: true })
+    const newPost = new PostMessage(post)
+    const user = await User.findById(createdBy)
+    user.hashTags = [...new Set([...user.hashTags, ...hashTags])]
+    await user.save()
 
-    res.json(updatedPost)
+    try {
+        await newPost.save()
+        return res.status(201).json({ newPost })
+    } catch (error) {
+        return res.status(409).json({ message: error.message })
+    }
 }
 
-export const getPosts = async (req, res) => {
+export const getAllTweets = async (req, res) => {
     try {
         const { id } = req.params
 

@@ -19,11 +19,9 @@ const seed = async () => {
             const tweetObj = tweetsSeed.tweets[i % tweetsSeed.tweets.length]
             const tweet = tweetObj ? tweetObj.tweet : null
 
-            const hashTags = tweet ? tweet.split(' ').filter((word) => word.startsWith('#')) : []
             await PosteModel.create({
-                tweet: tweet || 'This is a crazy tweet',
-                createdBy: user._id.toString(),
-                hashTags: hashTags
+                tweet: tweet || '#Neo4j is a really intresting tool',
+                createdBy: user._id.toString()
             })
 
             console.log(`Inserted "${tweet || 'This is a crazy tweet'}" successfully for user ${user.name}`)

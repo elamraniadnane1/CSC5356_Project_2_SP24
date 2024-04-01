@@ -24,9 +24,7 @@ const getPostsFromNeo4j = async (hashTags) => {
     }
 }
 
-export default getPostsFromNeo4j
-
-export const postTweetToNeo4j = async (tweet, userId) => {
+export const postTweetToNeo4j = async (tweet, userId, score, comparative) => {
     const session = driver.session()
     try {
         const query = `
@@ -34,15 +32,19 @@ export const postTweetToNeo4j = async (tweet, userId) => {
             text: "${tweet}",
             created_at: "2024-03-27T12:00:00Z",
             id_str: "${userId}",
-            favorites: 0
+            favorites: 0,
+            sentimentScore: ${score},
+            sentimentComparative: ${comparative}
         })
         RETURN t
         `
 
         const result = await session.run(query)
-        console.log('Tweet posted to Neo4j:', result)
+        console.log('\nTweet posted to Neo4j:\n', result)
         return result
     } finally {
         await session.close()
     }
 }
+
+export default getPostsFromNeo4j
