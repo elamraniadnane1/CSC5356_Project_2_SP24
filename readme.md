@@ -1,5 +1,5 @@
-# -----Twitter-Like Recommendation System-----
-![Uploading image.png…]()
+#             --------Twitter-Like Recommendation System--------
+
 
 ## Project Overview
 This project implements a Twitter-like recommendation system. It uses a microservices architecture with a focus on graph-based recommendations. The system suggests hashtags and users to follow based on user tweets and sentiments.
@@ -23,8 +23,8 @@ These instructions will get you a copy of the project up and running on your loc
 ### Installation
 1. Clone the repository: git clone https://github.com/elamraniadnane1/Project_3.git
 2. Navigate to the project directory and install the required Python packages:
-cd Project_3
-pip install -r requirements.txt
+4.cd Project_3
+5.pip install -r requirements.txt
 
 ### Running the Application
 1. Start the Neo4j and MongoDB databases (in a cloud), and ensure Kafka and Spark Streaming are running and Docker as well.
