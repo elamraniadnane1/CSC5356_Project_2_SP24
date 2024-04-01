@@ -13,7 +13,7 @@ These instructions will get you a copy of the project up and running on your loc
 ### Prerequisites
 - Python 3.10
 - Neo4j
-- MongoDB
+- [MongoDB Cloud](https://www.mongodb.com/products/platform/cloud)
 - Kafka
 - NPM
 - React.js / Node.js Framework
@@ -37,7 +37,7 @@ For more details please consult the official report & the video
 
 ## Built With
 - [Node.js](https://nodejs.org/en/) - The web framework used.
-- [React.js](https://react.dev/) - Another front-end framework
+- [React.js](https://react.dev/) - An open-source JavaScript library used for building user interfaces, particularly for single-page applications where you need a fast and interactive user experience. It's maintained by Facebook and a community of individual developers and companies.
 - [Neo4j](https://neo4j.com/) - Graph database.
 - [MongoDB](https://www.mongodb.com/) - Document database.
 - [Kafka](https://kafka.apache.org/) - Streaming platform.
