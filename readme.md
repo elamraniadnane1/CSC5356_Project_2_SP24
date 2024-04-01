@@ -1,4 +1,5 @@
 # -----Twitter-Like Recommendation System-----
+![Uploading image.png…]()
 
 ## Project Overview
 This project implements a Twitter-like recommendation system. It uses a microservices architecture with a focus on graph-based recommendations. The system suggests hashtags and users to follow based on user tweets and sentiments.
