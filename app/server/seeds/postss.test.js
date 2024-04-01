@@ -7,7 +7,7 @@ chai.use(chaiHttp)
 
 import PostMessage from '../models/poste.js'
 import User from '../models/user.js'
-import { getAllTweets, createPost, getRecommendedTweets, kafkaStreemedTweet } from './posts.js'
+import { getAllTweets, createPost, getRecommendedTweets, kafkaStreemedTweet } from '../controllers/posts.js'
 
 describe('getAllTweets', function () {
     let postMessagesStub, findByIdStub, req, res
