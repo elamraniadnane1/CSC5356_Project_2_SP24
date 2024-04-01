@@ -1,4 +1,4 @@
-# Twitter-Like Recommendation System
+# -----Twitter-Like Recommendation System-----
 
 ## Project Overview
 This project implements a Twitter-like recommendation system. It uses a microservices architecture with a focus on graph-based recommendations. The system suggests hashtags and users to follow based on user tweets and sentiments.
@@ -10,7 +10,7 @@ This project implements a Twitter-like recommendation system. It uses a microser
 ## Getting Started
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 ### Prerequisites
-- Python 3.x
+- Python 3.10
 - Neo4j
 - MongoDB
 - Kafka
@@ -22,15 +22,16 @@ These instructions will get you a copy of the project up and running on your loc
 ### Installation
 1. Clone the repository: git clone https://github.com/elamraniadnane1/Project_3.git
 2. Navigate to the project directory and install the required Python packages:
-cd your-repo
+cd Project_3
 pip install -r requirements.txt
 
 ### Running the Application
-1. Start the Neo4j and MongoDB databases, and ensure Kafka and Spark Streaming are running.
-2. Run the microservices:
-python -m web_application.app
+1. Start the Neo4j and MongoDB databases (in a cloud), and ensure Kafka and Spark Streaming are running and Docker as well.
+2. Install all the requirements
+3. Run the microservices
+For more details please consult the official report & the video
 ## Usage
-- Access the web application at `http://localhost:5004`.
+- Access the web application at `http://localhost:PORT`. The port depend on the local cfg of each user.
 - Post tweets, and view recommendations and sentiment analysis results.
 
 ## Built With
@@ -48,11 +49,8 @@ We use [GitHub](https://github.com/elamraniadnane1/Project_3) for versioning.
 - **Adnane El Amrani** - *AUI MSSE Student* - [elamraniadnane1](https://github.com/elamraniadnane1)
 - **Ayoub Maimmadi** - *AUI MSSE Student* - [/AyoubMaimmadi](https://github.com/ayoubMaimmadi/)
 
-## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
 
-
-# Project Report Outline
+# Project Report Outline ( Check our Submissionon on Canvas)
 
 This document provides an outline of the project report, detailing the structure and content of each section. The report is structured into several key sections, each focusing on a different aspect of the project.
 
