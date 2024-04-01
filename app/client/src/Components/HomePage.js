@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import { createPost, getPosts } from '../actions/posts'
+import { createPost, getPosts, getRecommendedTweets, kafkaStreemedTweet } from '../actions/posts'
 
 const HomePage = () => {
     const dispatch = useDispatch()
@@ -11,11 +11,19 @@ const HomePage = () => {
     const [activeTab, setActiveTab] = useState('default')
     const tokenData = JSON.parse(localStorage.getItem('profile'))
 
-    const fetchData = async (id) => {
+    const fetchAllData = async (id) => {
         try {
             await dispatch(getPosts(id))
         } catch (error) {
             console.error('Error fetching posts:', error)
+        }
+    }
+
+    const fetchRecommendedTweets = async (id) => {
+        try {
+            await dispatch(getRecommendedTweets(id))
+        } catch (error) {
+            console.error('Error fetching recommended tweets:', error)
         }
     }
 
@@ -31,19 +39,20 @@ const HomePage = () => {
         const formData = { tweet, createdBy: tokenData?.result._id }
         setTweet('')
 
-        dispatch(createPost(formData, history))
+        dispatch(kafkaStreemedTweet(formData))
         setTimeout(() => {
             window.location.reload()
         }, 100)
     }
 
     useEffect(() => {
-        fetchData(tokenData?.result._id)
+        fetchAllData(tokenData?.result._id)
+        fetchRecommendedTweets(tokenData?.result._id)
     }, [dispatch])
 
     const posts = useSelector((state) => state.posts)
 
-    const filteredPosts = posts?.postMessages?.filter((post) => posts?.userHashTags?.hashTags?.some((hashTag) => post.tweet.includes(hashTag)))
+    const recomendedTweets = useSelector((state) => state.tweets)
 
     return (
         <main>
@@ -74,22 +83,32 @@ const HomePage = () => {
                                 </form>
                             </div>
                             <div>
-                                <div className='flex-container'>
+                                <div className=''>
                                     <button className='btn5' onClick={() => setActiveTab('default')}>
                                         All Tweets
                                     </button>
                                     <button className='btn5' onClick={() => setActiveTab('filtered')}>
-                                        For You Tweets
+                                        Recomended Tweets
                                     </button>
                                 </div>
-                                <p>Total of: {activeTab === 'default' ? `${posts?.postMessages?.length}` : `${filteredPosts?.length}`} tweets</p>
-                                {(activeTab === 'default' ? posts?.postMessages : filteredPosts)?.map((post) => (
-                                    <div key={post?._id}>
-                                        <h5>{post?.createdBy.name}</h5>
-                                        <p>{post?.tweet}</p>
-                                    </div>
-                                ))}
-                                {activeTab === 'default' ? posts?.postMessages?.length === 0 && <p>No tweets</p> : filteredPosts.length === 0 && <p>No tweets</p>}
+                                <p>Total of: {activeTab === 'default' ? `${posts?.postMessages?.length}` : `${recomendedTweets?.length}`} tweets</p>
+                                <div>
+                                    {(activeTab === 'default' ? posts?.postMessages : [])?.map((post) => (
+                                        <div key={post?._id}>
+                                            <h5>{post?.createdBy.name}</h5>
+                                            <p>{post?.tweet}</p>
+                                        </div>
+                                    ))}
+                                    {(activeTab !== 'default' ? recomendedTweets : [])?.map((post) => (
+                                        <div key={post?._id}>
+                                            <h5>{post?.userName}</h5>
+                                            <p>{post?.TweetText}</p>
+                                        </div>
+                                    ))}
+                                    {activeTab === 'default'
+                                        ? posts?.postMessages?.length === 0 && <p>No tweets</p>
+                                        : recomendedTweets.length === 0 && <p>No recomended tweets, please use a hashtag to get Tweets tailored to you!</p>}
+                                </div>
                             </div>
                         </div>
                     </>

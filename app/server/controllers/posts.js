@@ -1,6 +1,6 @@
 import PostMessage from '../models/poste.js'
 import User from '../models/user.js'
-import getPostesFromNeo4j, { postTweetToNeo4j } from './neo4j.js'
+import { getPostsFromNeo4j, postTweetToNeo4j } from './neo4j.js'
 import { Kafka } from 'kafkajs'
 
 import Sentiment from 'sentiment'
@@ -21,8 +21,17 @@ export const kafkaStreemedTweet = async (req, res) => {
 
     var sentiment = new Sentiment()
 
-    const result = sentiment.analyze(tweet)
-    const tweetSentiment = { score: result.score, comparative: result.comparative }
+    const tweetSentimentResult = sentiment.analyze(tweet)
+    const tweetSentiment = { score: tweetSentimentResult.score, comparative: tweetSentimentResult.comparative }
+
+    const newPost = new PostMessage({ ...post, tweetSentiment })
+    await newPost.save()
+    const postedTweet = await PostMessage.findById(newPost._id).select('tweet')
+
+    const hashTags = tweet.split(' ').filter((word) => word.startsWith('#'))
+    const user = await User.findById(createdBy)
+    user.hashTags = [...new Set([...user.hashTags, ...hashTags])]
+    await user.save()
 
     await producer.send({
         topic: 'tweet-sentiment-analysis',
@@ -33,28 +42,21 @@ export const kafkaStreemedTweet = async (req, res) => {
 
     await consumer.subscribe({ topic: 'tweet-sentiment-analysis', fromBeginning: true })
 
-    const hashTags = tweet.split(' ').filter((word) => word.startsWith('#'))
-    const newPost = new PostMessage({ ...post, tweetSentiment })
-    await newPost.save()
-    const postedTweet = await PostMessage.findById(newPost._id).select('tweet createdBy tweetSentiment')
-    const user = await User.findById(createdBy)
-    user.hashTags = [...new Set([...user.hashTags, ...hashTags])]
-    await user.save()
-
-    let kafkaStreamedTweet = null
     await consumer.run({
         eachMessage: async ({ topic, partition, message }) => {
             console.log('\nKafka Streamed Tweet:\n', {
+                topic,
+                partition,
                 value: message.value.toString()
             })
-            kafkaStreamedTweet = JSON.parse(message.value.toString())
+
+            const kafkaStreamedTweet = JSON.parse(message.value.toString())
+            await postTweetToNeo4j(kafkaStreamedTweet?.tweet, kafkaStreamedTweet?.createdBy, tweetSentimentResult.score, tweetSentimentResult.comparative)
         }
     })
 
-    const neo4jUpdatedGraph = await postTweetToNeo4j(tweet, createdBy, result.score, result.comparative)
-
     try {
-        return res.status(201).json({ kafkaStreamedTweet, user, sentimentResult: result, postedTweet, neo4jUpdatedGraph })
+        return res.status(201).json({ user, postedTweet, tweetSentimentResult })
     } catch (error) {
         return res.status(409).json({ message: error.message })
     }
@@ -67,7 +69,12 @@ export const getRecommendedTweets = async (req, res) => {
         const userHashTags = await User.findById(id).select('hashTags')
         const hashTags = userHashTags.hashTags
 
-        const forYouPosts = await getPostesFromNeo4j(hashTags)
+        const forYouPosts = await getPostsFromNeo4j(hashTags)
+        const allUsers = await User.find()
+
+        forYouPosts.map((post) => {
+            post.userName = allUsers[Math.floor(Math.random() * allUsers.length)].name
+        })
 
         res.status(200).json(forYouPosts)
     } catch (error) {

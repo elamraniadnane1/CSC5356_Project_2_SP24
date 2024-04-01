@@ -2,12 +2,12 @@ export default (posts = [], action) => {
     switch (action.type) {
         case 'FETCH_ALL':
             return action.payload
-        case 'KAFAKA':
-            return action.payload
+        case 'KAFKA':
+            return [...posts, action.payload]
         case 'CREATE':
             return [...posts, action.payload]
         case 'SENTIMENT':
-            return posts.map((post) => (post._id === action.payload._id ? action.payload : post))
+            return action.payload
         default:
             return posts
     }
