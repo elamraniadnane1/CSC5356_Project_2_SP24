@@ -4,14 +4,12 @@
     "description": "",
     "main": "index.js",
     "type": "module",
-    "scripts": {
-        "start": "nodemon index.js"
-    },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "scripts": {
-        "test": "mocha './controllers/postss.test.js'"
+        "test": "mocha './controllers/postss.test.js'",
+        "start": "nodemon index.js"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",
