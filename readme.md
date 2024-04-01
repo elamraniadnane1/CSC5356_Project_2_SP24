@@ -47,7 +47,7 @@ We use [GitHub](https://github.com/elamraniadnane1/Project_3) for versioning.
 
 ## Authors
 - **Adnane El Amrani** - *AUI MSSE Student* - [elamraniadnane1](https://github.com/elamraniadnane1)
-- **Ayoub Maimmadi** - *AUI MSSE Student* - [/AyoubMaimmadi](https://github.com/ayoubMaimmadi/)
+- **Ayoub Maimmadi** - *AUI MSSE Student* - [AyoubMaimmadi](https://github.com/ayoubMaimmadi/)
 
 
 # Project Report Outline ( Check our Submissionon on Canvas)
